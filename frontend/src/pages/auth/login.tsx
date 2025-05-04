@@ -22,9 +22,9 @@ export default function Login() {
 
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    
+
     const result = loginSchema.safeParse({ email, password });
-    
+
     if (!result.success) {
       const errorMessages = formatZodErrors(result.error.errors)
         .split("\n")
@@ -44,7 +44,7 @@ export default function Login() {
     }
 
     try {
-      console.log(email, password)
+      console.log(email, password);
       const response = await api.post("/auth/login", {
         email,
         password,
@@ -56,7 +56,9 @@ export default function Login() {
         id: response.data?.user?.id,
       });
 
-      toast.success(`Welcome back ${response.data?.user?.username}`);
+      toast.success(`Welcome back ${response.data?.user?.username}`, {
+        position: "top-center",
+      });
     } catch (error) {
       if (isAxiosError(error))
         toast.error(error.response?.data?.message || "Login failed");

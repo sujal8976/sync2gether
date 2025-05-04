@@ -26,8 +26,9 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="flex justify-center items-center border-b-2">
-      <div className="w-[90%] flex justify-end items-center py-4">
+    <nav className="flex justify-center items-center dark:bg-zinc-900 rounded-md">
+      <div className="w-[90%] flex justify-between items-center py-2 lg:py-3">
+        <div className="text-2xl lg:text-3xl font-medium font-serif">sync2gether</div>
         <div className="flex gap-4 justify-center items-center">
           {pathname === "/auth/signup" && !isAuthenticated && (
             <Button className="text-md" onClick={() => navigate("/auth/login")}>

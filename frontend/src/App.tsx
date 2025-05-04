@@ -10,10 +10,13 @@ import { useUserStore } from "./store/user";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 
+const Hero = lazy(() => import("./pages/public/landing"));
 const Signup = lazy(() => import("./pages/auth/signup"));
-const Redirect = lazy(() => import("./pages/public/redirect"));
-const Home = lazy(() => import("./pages/room/home"));
 const Login = lazy(() => import("./pages/auth/login"));
+
+const Home = lazy(() => import("./pages/room/home"));
+const Room = lazy(() => import("./pages/room/room"));
+
 const PageNotFound = lazy(() => import("./pages/not-found"));
 
 function App() {
@@ -45,7 +48,7 @@ function App() {
       <Provider>
         <Suspense
           fallback={
-            <div className="flex justify-center items-center w-screen h-screen">
+            <div className="flex justify-center items-center w-screen h-[100svh]">
               <Spinner className="size-20" />
             </div>
           }
@@ -55,16 +58,16 @@ function App() {
             <Routes>
 
               {/* public Routes - these should be accessible when NOT authenticated */}
-              <Route path="/" element={<Redirect />} />
               <Route
                 path="/"
                 element={
                   <ProtectedRoute
-                    isAuthenticated={!getUser()}
-                    redirect="/room"
+                  isAuthenticated={!getUser()}
+                  redirect="/room"
                   />
                 }
               >
+                <Route path="" element={<Hero />} />
                 <Route path="auth/login" element={<Login />} />
                 <Route path="auth/signup" element={<Signup />} />
               </Route>
@@ -75,12 +78,14 @@ function App() {
                 element={
                   <ProtectedRoute
                     isAuthenticated={!!getUser()}
-                    redirect="/auth/login"
+                    redirect="/"
                   />
                 }
               >
-                <Route path="" element={<Home />} />
+                <Route path="room" element={<Home />} />
+                <Route path="room/:roomId" element={<Room />} />
               </Route>
+
               {/* Not Found Page */}
               <Route path="*" element={<PageNotFound />} />
             </Routes>

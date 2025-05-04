@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { Github, LogIn, MoveRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SplashCursor } from "@/components/custom/cursor";
+// import { SplashCursor } from "@/components/custom/cursor";
 import { useNavigate } from "react-router-dom";
 
 function Hero() {
@@ -29,8 +29,8 @@ function Hero() {
       <div className="container mx-auto">
         <div className="flex gap-8 py-20 lg:py-40 items-center justify-center flex-col">
           <div>
-            <a href="https://github.com/sujal8976" target="_blank">
-              <Button variant="secondary" size="sm" className="gap-4">
+            <a href="https://github.com/sujal8976/sync2gether" target="_blank">
+              <Button variant="secondary" size="sm" className="gap-4 cursor-pointer">
                 <Github className="w-4 h-4" /> Github
               </Button>
             </a>
@@ -95,7 +95,7 @@ export { Hero };
 export default function Home() {
   return (
     <div className="block">
-      <SplashCursor />
+      {/* <SplashCursor /> */}
       <Hero />
     </div>
   );
