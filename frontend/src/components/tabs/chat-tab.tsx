@@ -3,9 +3,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 // import { Avatar } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, User, Bot } from "lucide-react";
-import ChatHeader from "../chats/chat-header";
 
 // Types for our chat messages
 interface Message {
@@ -150,10 +148,8 @@ export default function ChatTab({ className }: { className?: string }) {
         className
       )}
     >
-      <ChatHeader />
 
       {/* Messages area */}
-      {/* <ScrollArea className="p-4 h-[288px-69px-45px]"> */}
       <div className="p-4 mb-10 md:mb-15 pb-0 w-full overflow-y-scroll remove-scrollbar">
         <div className="flex flex-col space-y-4 ">
           {messages.map((message) => (
@@ -216,7 +212,6 @@ export default function ChatTab({ className }: { className?: string }) {
           <div ref={messagesEndRef} />
         </div>
       </div>
-      {/* </ScrollArea> */}
 
       {/* Input area */}
       <div className="bg-black p-2 md:p-4 absolute bottom-0 w-full md:border-t">
