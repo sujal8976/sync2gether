@@ -11,7 +11,7 @@ export const authenticate = (
     const token = req.cookies.accessToken;
 
     if (!token) {
-      throw new ErrorHandler("Token expired", 403, "token_expired");
+      throw new ErrorHandler("Unauthenticated or Token expired", 403, "token_expired");
     }
 
     const decoded = verifyAccessToken(token);

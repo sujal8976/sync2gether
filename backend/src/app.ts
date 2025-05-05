@@ -4,7 +4,11 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import { errorMiddleware } from "./middlewares/error";
+
 import authRoute from "./routes/auth.routes";
+import roomRoute from "./routes/room.routes";
+import videoRoute from "./routes/video.routes";
+import playlistRoute from "./routes/playlists.routes";
 
 dotenv.config();
 
@@ -34,6 +38,9 @@ app.use(express.json());
 
 // routes
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/room", roomRoute);
+app.use("/api/v1/videos", videoRoute);
+app.use("/api/v1/playlists", playlistRoute);
 
 // health check
 app.get("/api/health", (req, res) => {

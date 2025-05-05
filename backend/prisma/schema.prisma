@@ -14,21 +14,78 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(uuid())
-  username      String         @unique
-  email         String         @unique
-  password      String
+  id       String @id @default(cuid())
+  username String @unique
+  email    String @unique
+  password String
+
   refreshTokens RefreshToken[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  roomHosts     Room[]         @relation("HostRooms")
+  roomMembers   RoomMembers[]
+  chats         Chat[]
+  playlists     Playlist[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model RefreshToken {
-  id        String   @id @default(uuid())
-  token     String   @unique
-  userId    String
+  id     String @id @default(cuid())
+  token  String @unique
+  userId String
+
   expiresAt DateTime
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Room {
+  id   String @id @default(cuid())
+  host String
+
+  hostId   User          @relation("HostRooms", fields: [host], references: [id], onDelete: Cascade)
+  members  RoomMembers[]
+  chats    Chat[]
+  playlist Playlist[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RoomMembers {
+  id     String @id @default(cuid())
+  userId String
+  roomId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Chat {
+  id      String @id @default(cuid())
+  message String
+  userId  String
+  roomId  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+model Playlist {
+  id        String  @id @default(cuid())
+  title     String
+  videoId   String
+  thumbnail String
+  userId    String
+  roomId    String?
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room Room? @relation(fields: [roomId], references: [id])
 }
