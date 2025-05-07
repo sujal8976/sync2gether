@@ -3,6 +3,8 @@ import { parse } from "url";
 import { WebSocketService } from "./services/websocket.service";
 import dotenv from "dotenv";
 import { validateToken } from "./utils/validateToken";
+import prisma from "../db";
+import { AuthenticatedWebSocket } from "../types/websocket";
 
 dotenv.config();
 
@@ -19,14 +21,27 @@ WSserver.on("upgrade", async (request, socket, head) => {
     return;
   }
 
-  const user = await validateToken(token);
-  if (!user || !user?.userId) {
+  const userId = await validateToken(token);
+  if (!userId) {
     socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
     socket.destroy();
     return;    
   }
 
+  const user = await prisma.user.findUnique({
+    where: {id: userId},
+    select: {username: true}
+  })
+  if (!user || !user.username) {
+    socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+    socket.destroy();
+    return;
+  }
+
   wsService.getWsServer().handleUpgrade(request, socket, head, (ws) => {
-    wsService.handleConnection(socket, ws, user.userId);
+    const authenticatedWs = ws as AuthenticatedWebSocket;
+    authenticatedWs.userId = userId;
+    authenticatedWs.username = user.username;
+    wsService.handleConnection(authenticatedWs, userId);
   })
 });

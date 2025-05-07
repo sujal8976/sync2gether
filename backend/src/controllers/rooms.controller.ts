@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import ErrorHandler from "../utils/ErrorHandler";
+import ErrorHandler from "../utils/errors/ErrorHandler";
 import prisma from "../db";
 
 export const createRoom = async (
@@ -18,13 +18,12 @@ export const createRoom = async (
 
     const room = await prisma.room.create({
       data: { host: req.user.userId },
-      
     });
 
     await prisma.roomMembers.create({
       data: {
         userId: req.user.userId,
-        roomId: room.id,
+        roomId: room.id
       },
     });
 
@@ -39,7 +38,11 @@ export const createRoom = async (
   }
 };
 
-export const joinRoom = async (req: Request, res: Response, next: NextFunction) => {
+export const joinRoom = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     if (!req.user) throw new ErrorHandler("Not authenticated", 401);
 
@@ -49,24 +52,24 @@ export const joinRoom = async (req: Request, res: Response, next: NextFunction) 
     const existingMember = await prisma.roomMembers.findFirst({
       where: {
         userId: req.user.userId,
-        roomId
-      }
-    })
+        roomId,
+      },
+    });
     if (existingMember) throw new ErrorHandler("User already joined room", 400);
 
     await prisma.roomMembers.create({
       data: {
         userId: req.user.userId,
         roomId
-      }
-    })
+      },
+    });
 
     res.status(200).json({
       success: true,
-      message: "User joined room"
-    })
+      message: "User joined room",
+    });
   } catch (error) {
     if (error instanceof ErrorHandler) next(error);
-    else next(new ErrorHandler("failed to add user in room", 500))
+    else next(new ErrorHandler("failed to add user in room", 500));
   }
 };

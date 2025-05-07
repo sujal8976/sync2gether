@@ -1,5 +1,5 @@
 import * as ytdl from "@distube/ytdl-core";
-import ErrorHandler from "../ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 import { VideoData } from "../../types/video";
 
 export const getVideoInfo = async (url: string): Promise<VideoData> => {

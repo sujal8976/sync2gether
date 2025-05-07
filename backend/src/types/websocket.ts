@@ -12,9 +12,14 @@ export enum WebSocketMessageType {
   LEAVE_ROOM = "LEAVE_ROOM",
   SEND_MESSAGE = "SEND_MESSAGE",
   ERROR = "ERROR",
-  //  = "",
-  //  = "",
-  //  = "",
-  //  = "",
-  //  = "",
+  USER_STATUS = "USER_STATUS",
+  CONNECTION_ESTABLISHED  = "CONNECTION_ESTABLISHED",
+  ROOM_JOINED  = "ROOM_JOINED",
+  ROOM_ALREADY_JOINED  = "ROOM_ALREADY_JOINED",
+  ROOM_LEFT  = "ROOM_LEFT",
+}
+
+export interface WebSocketMessage {
+  type: WebSocketMessageType;
+  payload: any;
 }

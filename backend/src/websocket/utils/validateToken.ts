@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export const validateToken = async (
   token: string
-): Promise<{ userId: string } | null> => {
+): Promise<string | null> => {
   try {
     const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || "secret";
 
@@ -10,9 +10,7 @@ export const validateToken = async (
       userId: string;
     };
 
-    return {
-      userId: decoded.userId,
-    };
+    return decoded.userId;
   } catch (error) {
     return null;
   }

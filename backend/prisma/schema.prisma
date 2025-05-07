@@ -18,6 +18,7 @@ model User {
   username String @unique
   email    String @unique
   password String
+  isOnline Boolean
 
   refreshTokens RefreshToken[]
   roomHosts     Room[]         @relation("HostRooms")
@@ -54,15 +55,17 @@ model Room {
 }
 
 model RoomMembers {
-  id     String @id @default(cuid())
-  userId String
-  roomId String
+  id       String @id @default(cuid())
+  userId   String
+  roomId   String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, roomId])
 }
 
 model Chat {

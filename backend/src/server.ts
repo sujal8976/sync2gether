@@ -1,5 +1,5 @@
 import app from "./app";
-import { WSserver }from './websocket/ws-app';
+import { WSserver }from './websocket';
 // start server
 const HTTP_PORT = process.env.PORT || 3000;
 const WS_PORT = process.env.WS_PORT || 5000;

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import ErrorHandler from "../utils/ErrorHandler";
+import ErrorHandler from "../utils/errors/ErrorHandler";
 import { VideoData } from "../types/video";
 import { scrapeSearchResults } from "../utils/videos/scrapeSearchResults";
 import { getVideoInfo } from "../utils/videos/getVideoInfo";

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import ErrorHandler from "../utils/ErrorHandler";
+import ErrorHandler from "../utils/errors/ErrorHandler";
 import { VideoData } from "../types/video";
 import prisma from "../db";
 import { Playlist } from "../types/playlist";
@@ -38,7 +38,11 @@ export const addVideoToPlaylist = async (
   }
 };
 
-export const getPlaylist = async (req: Request, res: Response, next: NextFunction) => {
+export const getPlaylist = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     if (!req.user?.userId) throw new ErrorHandler("Not authenticated", 401);
 
@@ -62,8 +66,8 @@ export const getPlaylist = async (req: Request, res: Response, next: NextFunctio
 
     res.status(200).json({
       success: true,
-      playlists 
-    })
+      playlists,
+    });
   } catch (error) {
     if (error instanceof ErrorHandler) next(error);
     else throw new ErrorHandler("Failed to get playlist", 500);

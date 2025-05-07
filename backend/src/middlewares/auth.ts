@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import ErrorHandler from "../utils/ErrorHandler";
-import { verifyAccessToken } from "../utils/jwt";
+import ErrorHandler from "../utils/errors/ErrorHandler";
+import { verifyAccessToken } from "../utils/jwt/jwt";
 
 export const authenticate = (
   req: Request,
@@ -11,7 +11,11 @@ export const authenticate = (
     const token = req.cookies.accessToken;
 
     if (!token) {
-      throw new ErrorHandler("Unauthenticated or Token expired", 403, "token_expired");
+      throw new ErrorHandler(
+        "Unauthenticated or Token expired",
+        403,
+        "token_expired"
+      );
     }
 
     const decoded = verifyAccessToken(token);

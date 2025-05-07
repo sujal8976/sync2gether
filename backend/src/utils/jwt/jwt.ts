@@ -1,7 +1,7 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import { Request, Response } from "express";
-import prisma from "../db";
-import ErrorHandler from "./ErrorHandler";
+import prisma from "../../db";
+import ErrorHandler from "../errors/ErrorHandler";
 
 interface TokenPayload {
   userId: string;

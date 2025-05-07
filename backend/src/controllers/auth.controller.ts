@@ -10,9 +10,9 @@ import {
   setRefreshToken,
   clearAccessToken,
   clearRefreshToken,
-} from "../utils/jwt";
+} from "../utils/jwt/jwt";
 import { loginSchema, registerSchema } from "../schemas/auth";
-import ErrorHandler from "../utils/ErrorHandler";
+import ErrorHandler from "../utils/errors/ErrorHandler";
 import { z } from "zod";
 
 export const register = async (
@@ -31,7 +31,11 @@ export const register = async (
         ],
       },
     });
-    if (existingUser) throw new ErrorHandler("User already exists with this email or username.", 409);
+    if (existingUser)
+      throw new ErrorHandler(
+        "User already exists with this email or username.",
+        409
+      );
 
     const hashedPassword = await bcrypt.hash(validateData.password, 10);
 
@@ -41,6 +45,7 @@ export const register = async (
         email: validateData.email,
         password: hashedPassword,
         username: validateData.username,
+        isOnline: false
       },
       select: {
         id: true,
