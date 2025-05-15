@@ -23,7 +23,7 @@ export const createRoom = async (
     await prisma.roomMembers.create({
       data: {
         userId: req.user.userId,
-        roomId: room.id
+        roomId: room.id,
       },
     });
 
@@ -46,7 +46,7 @@ export const joinRoom = async (
   try {
     if (!req.user) throw new ErrorHandler("Not authenticated", 401);
 
-    const roomId = req.params.roomId as string;
+    const roomId = req.params.roomId;
     if (!roomId) throw new ErrorHandler("Room Id is required", 404);
 
     const existingMember = await prisma.roomMembers.findFirst({
@@ -60,7 +60,7 @@ export const joinRoom = async (
     await prisma.roomMembers.create({
       data: {
         userId: req.user.userId,
-        roomId
+        roomId,
       },
     });
 
@@ -71,5 +71,35 @@ export const joinRoom = async (
   } catch (error) {
     if (error instanceof ErrorHandler) next(error);
     else next(new ErrorHandler("failed to add user in room", 500));
+  }
+};
+
+export const getRoom = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user?.userId) throw new ErrorHandler("Not authenticated", 401);
+
+    const roomId = req.params.roomId;
+    if (!roomId) throw new ErrorHandler("Room Id is required", 404);
+
+    const room = await prisma.room.findUnique({
+      where: { id: roomId },
+      select: {
+        id: true,
+        host: true,
+      },
+    });
+    if (!room) throw new ErrorHandler("Room not found", 404);
+
+    res.status(200).json({
+      success: true,
+      room,
+    });
+  } catch (error) {
+    if (error instanceof ErrorHandler) next(error);
+    else next(new ErrorHandler("Failed to find room", 500));
   }
 };

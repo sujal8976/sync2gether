@@ -9,6 +9,7 @@ import authRoute from "./routes/auth.routes";
 import roomRoute from "./routes/room.routes";
 import videoRoute from "./routes/video.routes";
 import playlistRoute from "./routes/playlists.routes";
+import roomMembersRoute from "./routes/room-member.routes";
 
 dotenv.config();
 
@@ -38,9 +39,10 @@ app.use(express.json());
 
 // routes
 app.use("/api/v1/auth", authRoute);
-app.use("/api/v1/room", roomRoute);
+app.use("/api/v1/rooms", roomRoute);
 app.use("/api/v1/videos", videoRoute);
 app.use("/api/v1/playlists", playlistRoute);
+app.use("/api/v1/room-members", roomMembersRoute);
 
 // health check
 app.get("/api/health", (req, res) => {

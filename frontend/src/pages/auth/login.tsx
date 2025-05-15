@@ -44,7 +44,6 @@ export default function Login() {
     }
 
     try {
-      console.log(email, password);
       const response = await api.post("/auth/login", {
         email,
         password,
@@ -54,6 +53,7 @@ export default function Login() {
         username: response.data?.user?.username,
         email: response.data?.user?.email,
         id: response.data?.user?.id,
+        accessToken: response.data?.user?.accessToken,
       });
 
       toast.success(`Welcome back ${response.data?.user?.username}`, {

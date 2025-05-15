@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-// import { Avatar } from "@/components/ui/avatar";
-import { Send, User, Bot } from "lucide-react";
+import { Send } from "lucide-react";
+import TextBubble from "../message-bubble/text-bubble";
 
 // Types for our chat messages
 interface Message {
@@ -14,75 +14,13 @@ interface Message {
 }
 
 export default function ChatTab({ className }: { className?: string }) {
-  const [messages, setMessages] = useState<Message[]>([
-    // {
-    //   id: "1",
-    //   content: "Hello! How can I help you today?",
-    //   sender: "bot",
-    //   timestamp: new Date(),
-    // },
-    // {
-    //   id: "13",
-    //   content: "Hello! How can I help you today?",
-    //   sender: "bot",
-    //   timestamp: new Date(),
-    // },
-    // {
-    //   id: "12",
-    //   content: "Hello! How can I help you today?",
-    //   sender: "bot",
-    //   timestamp: new Date(),
-    // },
-    // {
-    //   id: "1432",
-    //   content: "Hello! How can I help you today?",
-    //   sender: "bot",
-    //   timestamp: new Date(),
-    // },
-    // {
-    //   id: "1234",
-    //   content: "Hello! How can I help you today?",
-    //   sender: "bot",
-    //   timestamp: new Date(),
-    // },
-    // {
-    //   id: "12343",
-    //   content: "Hello! How can I help you today?",
-    //   sender: "bot",
-    //   timestamp: new Date(),
-    // },
-    // {
-    //   id: "1122",
-    //   content: "Hello! How can I help you today?",
-    //   sender: "bot",
-    //   timestamp: new Date(),
-    // },
-    {
-      id: "1756",
-      content: "Hello! How can I help you today?",
-      sender: "bot",
-      timestamp: new Date(),
-    },
-    {
-      id: "1567",
-      content: "Hello! How can I help you today?",
-      sender: "bot",
-      timestamp: new Date(),
-    },
-    {
-      id: "1345345",
-      content: "Hello! How can I help you today?",
-      sender: "bot",
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to the latest message
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
   }, [messages]);
 
   // Mock function to simulate AI response
@@ -115,7 +53,6 @@ export default function ChatTab({ className }: { className?: string }) {
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setIsLoading(true);
 
     // Generate and add bot response
     try {
@@ -129,8 +66,6 @@ export default function ChatTab({ className }: { className?: string }) {
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error generating response:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -148,48 +83,24 @@ export default function ChatTab({ className }: { className?: string }) {
         className
       )}
     >
-
       {/* Messages area */}
-      <div className="p-4 mb-10 md:mb-15 pb-0 w-full overflow-y-scroll remove-scrollbar">
-        <div className="flex flex-col space-y-4 ">
-          {messages.map((message) => (
-            <div
+      <div className="p-4 mb-13 md:mb-19 pb-0 w-full overflow-y-scroll remove-scrollbar">
+        <div className="flex flex-col">
+          {messages.map((message, index) => {
+            const previousMessage = index > 0 ? messages[index - 1] : null;
+            const isConsecutive = previousMessage
+              ? previousMessage.sender === message.sender
+              : false;
+            return (
+            <TextBubble
               key={message.id}
-              className={cn(
-                "flex items-start gap-2.5",
-                message.sender === "user" ? "flex-row-reverse" : ""
-              )}
-            >
-              <div className="flex-shrink-0">
-                {message.sender === "user" ? (
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
-                    <User className="h-4 w-4" />
-                  </div>
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                    <Bot className="h-4 w-4" />
-                  </div>
-                )}
-              </div>
-              <div
-                className={cn(
-                  "max-w-3/4 px-4 py-2 rounded-lg",
-                  message.sender === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted"
-                )}
-              >
-                <p className="text-sm">{message.content}</p>
-                <p className="text-xs mt-1 opacity-70">
-                  {message.timestamp.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
-              </div>
-            </div>
-          ))}
-          {isLoading && (
+              isConsecutive={isConsecutive}
+              content={message.content}
+              sender={message.sender}
+              timestamp={message.timestamp}
+            />
+          )})}
+          {/* {isLoading && (
             <div className="flex items-start gap-2.5">
               <div className="flex-shrink-0">
                 <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
@@ -208,7 +119,7 @@ export default function ChatTab({ className }: { className?: string }) {
                 </p>
               </div>
             </div>
-          )}
+          )} */}
           <div ref={messagesEndRef} />
         </div>
       </div>
@@ -225,7 +136,7 @@ export default function ChatTab({ className }: { className?: string }) {
           />
           <Button
             onClick={handleSendMessage}
-            disabled={!input.trim() || isLoading}
+            disabled={!input.trim()}
             size="icon"
           >
             <Send className="h-4 w-4" />

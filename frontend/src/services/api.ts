@@ -5,8 +5,9 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
+import { useUserStore } from "@/store/user";
 
-const baseURL = `${import.meta.env.VITE_API_URL}/api/v1`;
+export const baseURL = `${import.meta.env.VITE_API_URL}/api/v1`;
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
@@ -32,18 +33,27 @@ api.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
     if (error.response?.status === 403 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        await axios.post(
+        const response = await axios.post(
           `${baseURL}/auth/refresh`,
           {},
           { withCredentials: true }
         );
+
+        const newAccessToken: string = response.data.newAccessToken;
+        if (newAccessToken)
+          useUserStore.getState().setAccessToken(newAccessToken);
+
         return api(originalRequest); // Retry the original request after token refresh
       } catch (refreshError) {
+
+        useUserStore.getState().removeUser();
         return Promise.reject(refreshError);
       }
     }

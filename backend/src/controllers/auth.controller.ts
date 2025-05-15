@@ -63,7 +63,7 @@ export const register = async (
     res.status(201).json({
       success: true,
       message: "User registered successfully",
-      user: { id: user.id, email: user.email, username: user.username },
+      user: { id: user.id, email: user.email, username: user.username, accessToken },
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -112,7 +112,7 @@ export const login = async (
     res.status(200).json({
       success: true,
       message: "Login Successful",
-      user: { id: user.id, email: user.email, username: user.username },
+      user: { id: user.id, email: user.email, username: user.username, accessToken },
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -154,6 +154,7 @@ export const refreshAccessToken = async (
     res.status(200).json({
       success: true,
       message: "Token refreshed successfully",
+      newAccessToken
     });
   } catch (error) {
     if (error instanceof ErrorHandler) {
@@ -192,6 +193,8 @@ export const me = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.user) throw new ErrorHandler("Not authenticated", 401);
 
+    const accessToken: string = req.cookies.accessToken;
+
     const user = await prisma.user.findUnique({
       where: {
         id: req.user.userId,
@@ -208,7 +211,7 @@ export const me = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({
       success: true,
       message: "user found",
-      user: { id: user.id, email: user.email, username: user.username },
+      user: { id: user.id, email: user.email, username: user.username, accessToken },
     });
   } catch (error) {
     if (error instanceof ErrorHandler) next(error);

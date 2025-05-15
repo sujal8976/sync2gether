@@ -69,6 +69,8 @@ export default function VideoController() {
       <button className="ml-2 text-white flex-shrink-0">
         <Settings size={18} />
       </button>
+
+      <button className="hidden" onClick={() => setDuration(11)}></button>
     </div>
   );
 }

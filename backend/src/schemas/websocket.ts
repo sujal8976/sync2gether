@@ -15,7 +15,17 @@ const leaveRoomSchema = z.object({
     })
 })
 
+const sendMessageSchema = z.object({
+    type: z.literal(WebSocketMessageType.SEND_MESSAGE),
+    payload: z.object({
+        roomId: z.string(),
+        userId: z.string(),
+        message: z.string(),
+    })
+})
+
 export class WebSocketMessageSchemas {
     static joinRoomSchema = joinRoomSchema;
     static leaveRoomSchema = leaveRoomSchema;
+    static sendMessageSchema = sendMessageSchema;
 }

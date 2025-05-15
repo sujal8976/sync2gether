@@ -58,6 +58,7 @@ export default function Signup() {
         username: response.data?.user?.username,
         email: response.data?.user?.email,
         id: response.data?.user?.id,
+        accessToken: response.data?.user?.accessToken,
       });
 
       toast.success(`Welcome ${response.data?.user?.username}`);
