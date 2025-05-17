@@ -8,6 +8,10 @@ import useRoomStore from "@/store/room";
 import { useUserStore } from "@/store/user";
 import { WebSocketMessage, WebSocketMessageType } from "@/types/websocket";
 import { baseURL } from "./api";
+import useRoomMembersStore from "@/store/room-members";
+import { toast } from "sonner";
+import useChatsStore from "@/store/chat";
+import { Chat } from "@/types/chat";
 
 interface RefreshTokenResponse {
   success: boolean;
@@ -120,7 +124,51 @@ class WebSocketService {
   private handleMessage(message: WebSocketMessage) {
     switch (message.type) {
       case WebSocketMessageType.ROOM_JOINED:
-        useRoomStore.getState().setRoomConnectionStatus("connected");
+        if (message.payload.userId === useUserStore.getState().getUser()?.id)
+          useRoomStore.getState().setRoomConnectionStatus("connected");
+        else {
+          useRoomMembersStore.getState().addRoomMember({
+            userId: message.payload.userId,
+            username: message.payload.username,
+            isOnline: true,
+          });
+          toast("New member joined:", {
+            description: `${message.payload.username}`,
+          });
+        }
+        break;
+
+      case WebSocketMessageType.ALREADY_JOINED:
+        if (message.payload.userId === useUserStore.getState().getUser()?.id)
+          useRoomStore.getState().setRoomConnectionStatus("connected");
+        else
+          useRoomMembersStore.getState().setUserOnline(message.payload.userId);
+        break;
+
+      case WebSocketMessageType.USER_STATUS:
+        if (message.payload.status === "offline") {
+          useRoomMembersStore.getState().setUserOffline(message.payload.userId);
+          toast(`${message.payload.username} gone offline.`);
+        }
+        break;
+
+      case WebSocketMessageType.SEND_MESSAGE:
+        if (
+          useRoomStore.getState().getRoom()?.roomId === message.payload.roomId
+        ) {
+          if (!message.payload.tempId) {
+            const newMsg: Chat = {
+              id: message.payload.id,
+              message: message.payload.message,
+              createdAt: message.payload.createdAt,
+              user: {
+                id: message.payload.user.id,
+                username: message.payload.user.username,
+              },
+            };
+            useChatsStore.getState().addChat(newMsg);
+          }
+        }
         break;
 
       // case WebSocketMessageType.SEND_MESSAGE:
@@ -216,6 +264,7 @@ class WebSocketService {
     if (useRoomStore.getState().getRoom()) {
       useRoomStore.getState().setRoom(null);
       useRoomStore.getState().setRoomConnectionStatus("disconnected");
+      useRoomMembersStore.getState().clearAllMembers();
     }
 
     if (this.ws) {

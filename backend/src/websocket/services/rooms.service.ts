@@ -22,14 +22,14 @@ export class RoomService {
     }
   }
 
-  static async addUserToRoom(userId: string, roomId: string): Promise<"ADDED" | "FAILED"> {
+  static async addUserToRoom(userId: string, roomId: string): Promise<"ADDED" | "ALREADY_JOINED" | "FAILED"> {
     try {
       if (
         await prisma.roomMembers.findFirst({
           where: { userId, roomId },
         })
       ) {
-        return "ADDED";
+        return "ALREADY_JOINED";
       } else {
         await prisma.roomMembers.create({
           data: {

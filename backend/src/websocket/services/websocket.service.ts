@@ -31,12 +31,6 @@ export class WebSocketService {
       ws.currentRoom = null;
       this.clients.set(userId, ws);
       await UserService.updateUserStatus(userId, true);
-      this.broadcastToRoom("cmaes96g10001sbfnp42pz5h7", {
-        type: WebSocketMessageType.USER_STATUS,
-        payload: {
-          say: "yes"
-        }
-      })
       this.eventHandler.setupEventListeners(ws);
     } catch (error) {
       WSErrorHandler.sendError(ws, "Failed to establish connection", 401);

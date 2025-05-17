@@ -6,15 +6,24 @@ import QueueTab from "../tabs/queue-tab";
 import SearchTab from "../tabs/search-tabs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import useRoomMembersStore from "@/store/room-members";
+import useChatsStore from "@/store/chat";
+import { toast } from "sonner";
 
 const TABS = ["queue", "search", "chat", "members"];
 
 export default function RoomTabs({roomId}: {roomId: string}) {
   const fetchRoomMembers = useRoomMembersStore().fetchRoomMembers;
+  const fetchChats = useChatsStore().fetchChats;
 
   useEffect(() => {
     const initialize = async () => {
-      await fetchRoomMembers(roomId);
+      try {
+        await fetchRoomMembers(roomId);
+        await fetchChats(roomId, 1, 30);
+      } catch (error) {
+        if (error instanceof Error) toast.error(error.message || "Failed to load room resources.");
+        else toast.error("Failed to load room resources.");
+      }
     };
 
     initialize();

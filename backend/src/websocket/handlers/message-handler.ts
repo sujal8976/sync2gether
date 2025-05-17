@@ -69,6 +69,17 @@ export class WebSocketMessageHandler {
             },
           });
           break;
+        case "ALREADY_JOINED":
+          ws.currentRoom = roomId;
+          this.broadcastToRoom(roomId, {
+            type: WebSocketMessageType.ALREADY_JOINED,
+            payload: {
+              userId: ws.userId,
+              username: ws.username,
+              roomId,
+            },
+          });
+          break;
         case "FAILED":
           WSErrorHandler.sendError(ws, "Failed to join room");
           break;

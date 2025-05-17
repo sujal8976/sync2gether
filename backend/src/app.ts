@@ -10,6 +10,7 @@ import roomRoute from "./routes/room.routes";
 import videoRoute from "./routes/video.routes";
 import playlistRoute from "./routes/playlists.routes";
 import roomMembersRoute from "./routes/room-member.routes";
+import chatRoute from "./routes/chat.routes";
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use("/api/v1/rooms", roomRoute);
 app.use("/api/v1/videos", videoRoute);
 app.use("/api/v1/playlists", playlistRoute);
 app.use("/api/v1/room-members", roomMembersRoute);
+app.use("/api/v1/chats", chatRoute);
 
 // health check
 app.get("/api/health", (req, res) => {

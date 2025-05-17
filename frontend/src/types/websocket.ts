@@ -9,6 +9,7 @@ export enum WebSocketMessageType {
   ERROR = "ERROR",
   ROOM_JOINED = "ROOM_JOINED",
   ROOM_LEFT = "ROOM_LEFT",
+  ALREADY_JOINED = "ALREADY_JOINED"
 }
 
 export interface WebSocketMessage {

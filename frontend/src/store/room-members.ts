@@ -14,6 +14,8 @@ interface RoomMembersStore {
   getRoomMembers: () => RoomMember[];
   clearAllMembers: () => void;
   fetchRoomMembers: (roomId: string) => Promise<void>;
+  setUserOffline: (userId: string) => void;
+  setUserOnline: (userId: string) => void;
 }
 
 const useRoomMembersStore = create<RoomMembersStore>()(
@@ -57,6 +59,22 @@ const useRoomMembersStore = create<RoomMembersStore>()(
       set({ roomMembers: [] });
     },
 
+    setUserOffline: (userId) => {
+      set((state) => ({
+        roomMembers: state.roomMembers.map((m) =>
+          m.userId === userId ? { ...m, isOnline: false } : m
+        ),
+      }));
+    },
+
+    setUserOnline: (userId) => {
+      set((state) => ({
+        roomMembers: state.roomMembers.map((m) =>
+          m.userId === userId ? { ...m, isOnline: true } : m
+        ),
+      }));
+    },
+
     fetchRoomMembers: async (roomId: string) => {
       if (get().isLoading) return;
 
@@ -76,6 +94,8 @@ const useRoomMembersStore = create<RoomMembersStore>()(
         } else {
           throw new Error("Network error");
         }
+      } finally {
+        set({ isLoading: false });
       }
     },
   }))
