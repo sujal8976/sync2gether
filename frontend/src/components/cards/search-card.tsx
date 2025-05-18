@@ -13,9 +13,9 @@ export default function SearchCard() {
         <h3 className="truncate-text">
           asf fasf asf adf afafasfads asf asdfasf{" "}
         </h3>
-        <p className="truncate-text text-sm">
+        {/* <p className="truncate-text text-sm">
           Channel: <span className="">user123</span>
-        </p>
+        </p> */}
       </div>
       <div className="flex justify-center items-center">
         <Button>

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import TabsContentScrollArea from "../custom/tabsContents-scrollArea";
 import ChatTab from "../tabs/chat-tab";
 import MembersTab from "../tabs/members-tab";
@@ -11,22 +11,34 @@ import { toast } from "sonner";
 
 const TABS = ["queue", "search", "chat", "members"];
 
-export default function RoomTabs({roomId}: {roomId: string}) {
+export default function RoomTabs({ roomId }: { roomId: string }) {
   const fetchRoomMembers = useRoomMembersStore().fetchRoomMembers;
+  const clearAllMembers = useRoomMembersStore().clearAllMembers;
   const fetchChats = useChatsStore().fetchChats;
+  const resetChatsStore = useChatsStore().resetChatsStore;
+  const pageRef = useRef(1); // for ChatTab
 
   useEffect(() => {
     const initialize = async () => {
+      // for ChatTab
+      pageRef.current = 1;
+
       try {
         await fetchRoomMembers(roomId);
-        await fetchChats(roomId, 1, 30);
+        await fetchChats(roomId, pageRef.current, 30);
       } catch (error) {
-        if (error instanceof Error) toast.error(error.message || "Failed to load room resources.");
+        if (error instanceof Error)
+          toast.error(error.message || "Failed to load room resources.");
         else toast.error("Failed to load room resources.");
       }
     };
 
     initialize();
+
+    return () => {
+      resetChatsStore();
+      clearAllMembers();
+    };
   }, [fetchRoomMembers]);
 
   return (
@@ -38,7 +50,7 @@ export default function RoomTabs({roomId}: {roomId: string}) {
           </TabsTrigger>
         ))}
       </TabsList>
-      
+
       <TabsContentScrollArea value="queue">
         <QueueTab />
       </TabsContentScrollArea>
@@ -46,7 +58,7 @@ export default function RoomTabs({roomId}: {roomId: string}) {
         <SearchTab />
       </TabsContentScrollArea>
       <TabsContent value="chat">
-        <ChatTab />
+        <ChatTab pageRef={pageRef} roomId={roomId}/>
       </TabsContent>
       <TabsContentScrollArea value="members">
         <MembersTab />

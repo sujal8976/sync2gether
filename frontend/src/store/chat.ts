@@ -27,7 +27,9 @@ const useChatsStore = create<ChatsStore>((set, get) => ({
       const data: ChatResponse = (
         await api.get(`/chats?roomId=${roomId}&page=${page}&limit=${limit}`)
       ).data;
-      
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       if (data.success) {
         get().appendChats(data.chats);
         set({ hasMore: data.hasMore });
@@ -47,8 +49,12 @@ const useChatsStore = create<ChatsStore>((set, get) => ({
 
   appendChats: (newChats: Chat[]) => {
     set((state) => {
+      const uniqueChats = newChats.filter(
+        (newChat) =>
+          !state.chats.some((existingChat) => existingChat.id === newChat.id)
+      );
       return {
-        chats: [...newChats, ...state.chats],
+        chats: [...uniqueChats, ...state.chats],
       };
     });
   },
