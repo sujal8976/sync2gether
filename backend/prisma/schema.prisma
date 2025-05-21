@@ -14,9 +14,9 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(cuid())
-  username String @unique
-  email    String @unique
+  id       String  @id @default(cuid())
+  username String  @unique
+  email    String  @unique
   password String
   isOnline Boolean
 
@@ -55,9 +55,9 @@ model Room {
 }
 
 model RoomMembers {
-  id       String @id @default(cuid())
-  userId   String
-  roomId   String
+  id     String @id @default(cuid())
+  userId String
+  roomId String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
@@ -82,13 +82,13 @@ model Chat {
 }
 
 model Playlist {
-  id        String  @id @default(cuid())
-  title     String
-  videoId   String
-  thumbnail String
-  userId    String
-  roomId    String?
+  id             String @id @default(cuid())
+  title          String
+  youtubeVideoId String
+  thumbnail      String
+  userId         String
+  roomId         String
 
-  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  room Room? @relation(fields: [roomId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room Room @relation(fields: [roomId], references: [id])
 }
