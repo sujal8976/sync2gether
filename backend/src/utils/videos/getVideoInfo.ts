@@ -8,7 +8,7 @@ export const getVideoInfo = async (url: string): Promise<VideoData> => {
     return {
       title: info.title,
       thumbnail: info.thumbnails[0].url,
-      videoId: info.videoId,
+      youtubeVideoId: info.videoId,
     };
   } catch (error) {
     throw new ErrorHandler("VIdoe Info not found", 404);

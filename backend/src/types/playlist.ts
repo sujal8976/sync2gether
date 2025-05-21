@@ -1,7 +1,7 @@
 export interface Playlist {
-  roomId: string | null;
+  roomId: string;
   title: string;
-  videoId: string;
+  youtubeVideoId: string;
   thumbnail: string;
   id: string;
   userId: string;

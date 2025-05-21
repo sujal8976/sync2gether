@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import ErrorHandler from "../utils/errors/ErrorHandler";
 import { VideoData } from "../types/video";
 import prisma from "../db";
-import { Playlist } from "../types/playlist";
 
 export const addVideoToPlaylist = async (
   req: Request,
@@ -12,19 +11,22 @@ export const addVideoToPlaylist = async (
   try {
     if (!req.user?.userId) throw new ErrorHandler("Not authenticated", 401);
 
-    const roomId = req.query.roomId?.toString();
-
-    const { title, videoId, thumbnail }: VideoData = req.body;
-    if (!title || !videoId || !thumbnail)
+    const {
+      title,
+      youtubeVideoId,
+      thumbnail,
+      roomId,
+    }: VideoData & { roomId: string } = req.body;
+    if (!title || !youtubeVideoId || !thumbnail || !roomId)
       throw new ErrorHandler("Provide all required data of video", 400);
 
     await prisma.playlist.create({
       data: {
         title,
         thumbnail,
-        videoId,
+        youtubeVideoId,
         userId: req.user.userId,
-        roomId: roomId,
+        roomId,
       },
     });
 
@@ -46,27 +48,16 @@ export const getPlaylist = async (
   try {
     if (!req.user?.userId) throw new ErrorHandler("Not authenticated", 401);
 
-    const userId = req.query.userId?.toString();
     const roomId = req.query.roomId?.toString();
-    if (!roomId && !userId)
-      throw new ErrorHandler("Provide userId or RoomId to get Playlist", 400);
-    if (roomId && roomId)
-      throw new ErrorHandler("Provided both userId and RoomId", 400);
+    if (!roomId) throw new ErrorHandler("Provide RoomId to get Playlist", 400);
 
-    let playlists: Playlist[];
-    if (roomId) {
-      playlists = await prisma.playlist.findMany({
-        where: { roomId },
-      });
-    } else {
-      playlists = await prisma.playlist.findMany({
-        where: { userId },
-      });
-    }
+    const playlist = await prisma.playlist.findMany({
+      where: { roomId },
+    });
 
     res.status(200).json({
       success: true,
-      playlists,
+      playlist,
     });
   } catch (error) {
     if (error instanceof ErrorHandler) next(error);

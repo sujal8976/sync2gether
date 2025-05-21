@@ -28,13 +28,13 @@ export async function scrapeSearchResults(
             jsonData.contents.twoColumnSearchResultsRenderer.primaryContents
               .sectionListRenderer.contents[0].itemSectionRenderer.contents;
 
-          for (let i = 0; i < 10; i++) {
+          for (let i = 0; i < 20; i++) {
             const item = videos[i];
             if (item.videoRenderer) {
                 const title = item.videoRenderer.title.runs[0].text;
                 const thumbnail = item.videoRenderer.thumbnail.thumbnails[0].url;
                 const videoId = item.videoRenderer.videoId;
-                videoData.push({ title, thumbnail, videoId });
+                videoData.push({ title, thumbnail, youtubeVideoId: videoId });
               }
           }
         }
