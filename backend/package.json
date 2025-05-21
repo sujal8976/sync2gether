@@ -3,16 +3,18 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc -b",
-    "start": "tsc -b && node dist/server.js",
-    "prisma:migrate": "prisma migrate dev"
+    "build": "node esbuild.js",
+    "dev": "tsc -b && node dist/server.js",
+    "start": "node dist/index.js",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:generate": "prisma generate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@distube/ytdl-core": "^4.16.9",
+    "@distube/ytdl-core": "^4.16.10",
     "@prisma/client": "^6.5.0",
     "@types/ws": "^8.18.1",
     "axios": "^1.9.0",
@@ -35,6 +37,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.13.17"
+    "@types/node": "^22.13.17",
+    "esbuild": "^0.25.4"
   }
 }
