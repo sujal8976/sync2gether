@@ -17,9 +17,17 @@ export enum WebSocketMessageType {
   ROOM_JOINED  = "ROOM_JOINED",
   ALREADY_JOINED = "ALREADY_JOINED",
   ROOM_LEFT  = "ROOM_LEFT",
+  SYNC_PLAYER_PLAY = "SYNC_PLAYER_PLAY",
+  SYNC_PLAYER_PAUSE = "SYNC_PLAYER_PAUSE",
+  VIDEO_ADDED = "VIDEO_ADDED",
+  VOTE = 'VOTE'
 }
 
 export interface WebSocketMessage {
   type: WebSocketMessageType;
   payload: any;
+}
+
+export interface SyncPlayerMessageType {
+
 }

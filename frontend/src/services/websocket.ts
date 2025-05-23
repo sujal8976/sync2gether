@@ -12,6 +12,7 @@ import useRoomMembersStore from "@/store/room-members";
 import { toast } from "sonner";
 import useChatsStore from "@/store/chat";
 import { Chat } from "@/types/chat";
+import usePlayerStore from "@/store/player";
 
 interface RefreshTokenResponse {
   success: boolean;
@@ -169,6 +170,20 @@ class WebSocketService {
             useChatsStore.getState().addChat(newMsg);
           }
         }
+        break;
+
+      case WebSocketMessageType.VIDEO_ADDED:
+        usePlayerStore.getState().addVideo(message.payload);
+        break;
+
+      case WebSocketMessageType.VOTE:
+          usePlayerStore
+            .getState()
+            .applyExternalVote(
+              message.payload.playlistId,
+              message.payload.downvoteDelta,
+              message.payload.upvoteDelta
+            );
         break;
 
       // case WebSocketMessageType.SEND_MESSAGE:

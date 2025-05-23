@@ -42,6 +42,22 @@ export class WebSocketMessageHandler {
         case WebSocketMessageType.SEND_MESSAGE:
           await this.handleSendMessage(ws, message);
           break;
+
+        case WebSocketMessageType.SYNC_PLAYER_PLAY:
+          await this.handleSyncPlayerPlay(ws, message);
+          break;
+
+        case WebSocketMessageType.SYNC_PLAYER_PAUSE:
+          await this.handleSyncPlayerPause(ws, message);
+          break;
+
+        case WebSocketMessageType.VIDEO_ADDED:
+          await this.handleVideoAdded(ws, message);
+          break;
+
+        case WebSocketMessageType.VOTE:
+          this.handleVote(ws, message);
+          break;
       }
     } catch (error) {
       WSErrorHandler.sendError(ws, "Failed to process message");
@@ -152,6 +168,84 @@ export class WebSocketMessageHandler {
     } catch (error) {
       console.log("Error in handleSendMessage", error);
       WSErrorHandler.sendError(ws, "Failed to send message");
+    }
+  }
+
+  private async handleSyncPlayerPlay(
+    ws: AuthenticatedWebSocket,
+    message: WebSocketMessage
+  ): Promise<void> {
+    try {
+      const { roomId, time, username, videoId } =
+        WebSocketMessageSchemas.syncPlayerPlaySchema.parse(message).payload;
+
+      this.broadcastToRoom(roomId, {
+        type: WebSocketMessageType.SYNC_PLAYER_PLAY,
+        payload: {
+          time,
+          username,
+          videoId,
+        },
+      });
+    } catch (error) {
+      WSErrorHandler.sendError(ws, "Failed to sync video");
+    }
+  }
+
+  private async handleSyncPlayerPause(
+    ws: AuthenticatedWebSocket,
+    message: WebSocketMessage
+  ): Promise<void> {
+    try {
+      const { roomId, time, username, videoId } =
+        WebSocketMessageSchemas.syncPlayerPauseSchema.parse(message).payload;
+
+      this.broadcastToRoom(roomId, {
+        type: WebSocketMessageType.SYNC_PLAYER_PAUSE,
+        payload: {
+          time,
+          username,
+          videoId,
+        },
+      });
+    } catch (error) {
+      WSErrorHandler.sendError(ws, "Failed to sync video");
+    }
+  }
+
+  private async handleVideoAdded(
+    ws: AuthenticatedWebSocket,
+    message: WebSocketMessage
+  ): Promise<void> {
+    try {
+      const { roomId, ...payload } =
+        WebSocketMessageSchemas.videoAddedSchema.parse(message).payload;
+      this.broadcastToRoom(roomId, {
+        type: WebSocketMessageType.VIDEO_ADDED,
+        payload: {
+          ...payload,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      WSErrorHandler.sendError(ws, "Failed to sync video");
+    }
+  }
+
+  private handleVote(ws: AuthenticatedWebSocket, message: WebSocketMessage) {
+    try {
+      const { playlistId, roomId, upvoteDelta, userId, downvoteDelta } =
+        WebSocketMessageSchemas.voteSchema.parse(message).payload;
+      this.broadcastToRoom(roomId, {
+        type: WebSocketMessageType.VOTE,
+        payload: {
+          playlistId,
+          upvoteDelta,
+          downvoteDelta
+        },
+      }, [userId]);
+    } catch (error) {
+      WSErrorHandler.sendError(ws, "Failed to vote video");
     }
   }
 }

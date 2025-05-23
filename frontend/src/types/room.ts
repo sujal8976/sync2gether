@@ -1,4 +1,4 @@
-export interface RoomState {
+export interface Room {
     roomId: string;
     roomHost: string;
 }

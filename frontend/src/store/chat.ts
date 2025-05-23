@@ -28,8 +28,6 @@ const useChatsStore = create<ChatsStore>((set, get) => ({
         await api.get(`/chats?roomId=${roomId}&page=${page}&limit=${limit}`)
       ).data;
 
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
       if (data.success) {
         get().appendChats(data.chats);
         set({ hasMore: data.hasMore });

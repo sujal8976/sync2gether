@@ -2,20 +2,22 @@ import { useEffect, useRef } from "react";
 import TabsContentScrollArea from "../custom/tabsContents-scrollArea";
 import ChatTab from "../tabs/chat-tab";
 import MembersTab from "../tabs/members-tab";
-import QueueTab from "../tabs/queue-tab";
-import SearchTab from "../tabs/search-tabs";
+import PlaylistTab from "../tabs/playlist-tab";
+import SearchTab from "../tabs/search-tab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import useRoomMembersStore from "@/store/room-members";
 import useChatsStore from "@/store/chat";
 import { toast } from "sonner";
+import usePlayerStore from "@/store/player";
 
-const TABS = ["queue", "search", "chat", "members"];
+const TABS = ["playlist", "search", "chat", "members"];
 
 export default function RoomTabs({ roomId }: { roomId: string }) {
   const fetchRoomMembers = useRoomMembersStore().fetchRoomMembers;
   const clearAllMembers = useRoomMembersStore().clearAllMembers;
   const fetchChats = useChatsStore().fetchChats;
   const resetChatsStore = useChatsStore().resetChatsStore;
+  const fetchPlaylist = usePlayerStore().fetchPlaylist;
   const pageRef = useRef(1); // for ChatTab
 
   useEffect(() => {
@@ -24,6 +26,7 @@ export default function RoomTabs({ roomId }: { roomId: string }) {
       pageRef.current = 1;
 
       try {
+        await fetchPlaylist(roomId);
         await fetchRoomMembers(roomId);
         await fetchChats(roomId, pageRef.current, 30);
       } catch (error) {
@@ -42,7 +45,7 @@ export default function RoomTabs({ roomId }: { roomId: string }) {
   }, [fetchRoomMembers]);
 
   return (
-    <Tabs defaultValue="queue" className="w-full">
+    <Tabs defaultValue="playlist" className="w-full">
       <TabsList className="grid w-full grid-cols-4">
         {TABS.map((tab, i) => (
           <TabsTrigger key={i} className="capitalize" value={tab}>
@@ -51,8 +54,8 @@ export default function RoomTabs({ roomId }: { roomId: string }) {
         ))}
       </TabsList>
 
-      <TabsContentScrollArea value="queue">
-        <QueueTab />
+      <TabsContentScrollArea value="playlist">
+        <PlaylistTab />
       </TabsContentScrollArea>
       <TabsContentScrollArea value="search">
         <SearchTab />
