@@ -1,17 +1,33 @@
+import { useRef } from "react";
 import VideoController from "./controller";
+import ReactPlayer from "react-player/youtube";
 
 export default function VideoPlayer() {
+  const playerRef = useRef<ReactPlayer>(null);
+
   return (
     <>
-      <iframe
-        className="w-full h-[210px] md:h-[350px] lg:h-[450px]"
-        src="https://www.youtube.com/embed/AZ0WM6U48lI"
-        title="YouTube video player"
-        frameBorder="0"
-        // allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; web-share"
-        referrerPolicy="strict-origin-when-cross-origin"
-        allowFullScreen
-      />
+      <div className="w-full h-[210px] md:h-[350px] lg:h-[450px]">
+        <ReactPlayer
+          width={"100%"}
+          height={"100%"}
+          url={"https://www.youtube.com/watch?v=lFeYU31TnQ8"}
+          config={{
+            playerVars: {
+              controls: 0,
+              disablekb: 1,
+              showinfo: 0,
+              rel: 0,
+              modestbranding: 1,
+            },
+          }}
+          controls={false}
+          // getDuration={(duration: number) => console.log(duration)}
+          onReady={() => {
+            console.log('started')
+          }}
+        />
+      </div>
       <VideoController />
       <div className=" hidden md:flex w-full justify-between items-center">
         <div>
