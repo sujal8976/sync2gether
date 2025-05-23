@@ -37,6 +37,6 @@ export const searchVideo = async (
     });
   } catch (error) {
     if (error instanceof ErrorHandler) next(error);
-    else throw new ErrorHandler("Videos not found", 404);
+    else next(new ErrorHandler("Video not found", 500));
   }
 };
