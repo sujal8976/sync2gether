@@ -25,6 +25,7 @@ model User {
   roomMembers   RoomMembers[]
   chats         Chat[]
   playlists     Playlist[]
+  votes         Vote[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -89,6 +90,26 @@ model Playlist {
   userId         String
   roomId         String
 
+  @@unique([roomId, youtubeVideoId])
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  room Room @relation(fields: [roomId], references: [id])
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  votes Vote[]
+}
+
+model Vote {
+  id         String   @id @default(cuid())
+  voteType   Int // 1 = upvote, -1 = downvote
+  userId     String
+  playlistId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+
+  // One user can vote only once per playlist item
+  @@unique([userId, playlistId])
 }
